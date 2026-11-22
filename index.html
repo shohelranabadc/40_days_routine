@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>আমার ৪০ দিনের পরিবর্তন</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#17212b;--muted:#64748b;--line:#e2e8f0;--green:#16834a;--soft:#e8f5ed;--blue:#2563eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;line-height:1.5}
+.wrap{max-width:900px;margin:auto;padding:18px}.hero{background:#123c2b;color:#fff;border-radius:18px;padding:22px;margin-bottom:16px}.hero h1{margin:0 0 6px;font-size:25px}.hero p{margin:0;color:#d9eee2}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px}.stat b{font-size:25px;display:block}.muted{color:var(--muted);font-size:13px}.bar{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;background:var(--green);width:0}
+.panel{margin:14px 0}.panel h2{font-size:18px;margin:0 0 12px}.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+button,select,input,textarea{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;background:var(--green);color:white;cursor:pointer}button.secondary{background:#e8edf2;color:#263442}button.danger{background:#fff0f0;color:#a11}
+select,input[type=date],input[type=number],textarea{border:1px solid var(--line);border-radius:9px;padding:9px;background:#fff;color:var(--ink)}
+.habits{display:grid;grid-template-columns:1fr 1fr;gap:8px}.habit{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;gap:9px;align-items:flex-start;background:#fff}.habit input{width:19px;height:19px;accent-color:var(--green);margin-top:3px}.habit small{display:block;color:var(--muted);font-size:12px}
+.prayers{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.prayer{border:1px solid var(--line);border-radius:9px;padding:8px;text-align:center;background:#fff}.prayer input{accent-color:var(--green);width:18px;height:18px;display:block;margin:3px auto}
+.days{display:grid;grid-template-columns:repeat(8,1fr);gap:7px}.day{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 3px;text-align:center;cursor:pointer}.day.active{outline:2px solid var(--blue);border-color:var(--blue)}.day.done{background:var(--soft);border-color:#b7dfc5}.day strong{display:block}.day small{font-size:11px;color:var(--muted)}
+label.field{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px}textarea{width:100%;min-height:72px;resize:vertical}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1}
+.footer{font-size:12px;color:var(--muted);text-align:center;padding:15px}
+@media(max-width:600px){.wrap{padding:12px}.grid{grid-template-columns:1fr 1fr}.habits{grid-template-columns:1fr}.days{grid-template-columns:repeat(5,1fr)}.hero h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>আমার ৪০ দিনের পরিবর্তন</h1>
+    <p>ছোট ছোট কাজ, নিয়মিত চেষ্টা। একদিন বাদ গেলে পরদিন আবার শুরু।</p>
+  </header>
+
+  <section class="panel">
+    <div class="topline"><h2>শুরু করার তারিখ</h2><input id="startDate" type="date"></div>
+    <p class="muted">শুরুর তারিখ বদলালে ৪০ দিনের ক্যালেন্ডারের তারিখ বদলাবে। সংরক্ষিত দিনের কাজ মুছে যাবে না।</p>
+  </section>
+
+  <section class="grid">
+    <div class="stat"><span class="muted">মোট অগ্রগতি</span><b id="overall">০%</b><span class="muted">সব দিনের অভ্যাস মিলিয়ে</span><div class="bar"><span id="overallBar"></span></div></div>
+    <div class="stat"><span class="muted">সম্পন্ন দিন</span><b id="completedDays">০/৪০</b><span class="muted">কমপক্ষে ৬০% কাজ করা দিন</span></div>
+    <div class="stat"><span class="muted">আজকের অগ্রগতি</span><b id="todayScore">০/১০</b><span class="muted">আজকের চেকলিস্ট</span><div class="bar"><span id="todayBar"></span></div></div>
+  </section>
+
+  <section class="panel">
+    <div class="topline"><h2>৪০ দিনের ক্যালেন্ডার</h2><span class="muted">দিন নির্বাচন করে কাজ লিখুন</span></div>
+    <div class="days" id="days"></div>
+  </section>
+
+  <section class="panel">
+    <div class="topline"><h2 id="selectedTitle">দিন ১</h2><span class="muted" id="selectedDate"></span></div>
+    <h3 style="font-size:15px;margin:14px 0 8px">পাঁচ ওয়াক্ত নামাজ</h3>
+    <div class="prayers" id="prayers"></div>
+    <h3 style="font-size:15px;margin:16px 0 8px">দৈনিক অভ্যাস</h3>
+    <div class="habits" id="habits"></div>
+    <div class="row">
+      <div><label class="field" for="cigs">আজ কয়টি সিগারেট খেয়েছেন?</label><input id="cigs" type="number" min="0" max="99" value="0" style="width:100%"></div>
+      <div><label class="field" for="screen">আনুমানিক অপ্রয়োজনীয় মোবাইল ব্যবহার (ঘণ্টা)</label><input id="screen" type="number" min="0" max="24" step=".5" value="0" style="width:100%"></div>
+    </div>
+    <label class="field" for="note">আজকের নোট: কী ভালো হলো, কী কঠিন লাগল, কাল কী করব?</label>
+    <textarea id="note" placeholder="আজ আমি..."></textarea>
+    <div class="row" style="margin-top:12px"><button id="save">এই দিনের তথ্য সংরক্ষণ</button><button class="secondary" id="clearDay">এই দিনের চেকলিস্ট খালি করুন</button></div>
+    <p class="muted" id="saveMsg" aria-live="polite"></p>
+  </section>
+
+  <section class="panel">
+    <h2>৪০ দিনের সারাংশ</h2>
+    <div class="row">
+      <div class="stat"><span class="muted">নামাজ</span><b id="prayerTotal">০/২০০</b></div>
+      <div class="stat"><span class="muted">কুরআন</span><b id="quranTotal">০/৪০</b></div>
+      <div class="stat"><span class="muted">শেখার সেশন</span><b id="learnTotal">০/৪০</b></div>
+    </div>
+    <p class="muted">এই হিসাব আপনার সংরক্ষিত তথ্য থেকে তৈরি হবে। ফলাফল নিখুঁত হওয়ার দরকার নেই—ধারাবাহিক উন্নতিই লক্ষ্য।</p>
+    <div class="row"><button class="secondary" id="export">ডেটা ব্যাকআপ ডাউনলোড</button><button class="danger" id="reset">সব ডেটা মুছে ফেলুন</button></div>
+  </section>
+  <p class="footer">আপনার তথ্য এই ব্রাউজারের এই ডিভাইসেই সংরক্ষিত থাকে। ব্রাউজারের ডেটা মুছলে তথ্য হারাতে পারে—মাঝে মাঝে ব্যাকআপ নিন।</p>
+</div>
+<script>
+const KEY='forty_day_change_tracker_v1';
+const habitDefs=[
+ ['exercise','সকালের ব্যায়াম / হাঁটা','১৫–২০ মিনিট'],
+ ['quran','কুরআন পড়া বা শেখা','অন্তত ১০ মিনিট'],
+ ['learning','নির্ধারিত বিষয়ে শেখা','২৫ মিনিট; অফিসের দায়িত্বের বাইরে অনুমোদিত সময়ে'],
+ ['family','মেয়েদের মনোযোগ দিয়ে সময়','অন্তত ১৫ মিনিট'],
+ ['expense','আজকের খরচ লিখেছি','১–২ মিনিট'],
+ ['phone','ঘুমের আগে মোবাইল দূরে রেখেছি','ঘুমের ৩০ মিনিট আগে'],
+ ['sleep','সময়মতো ঘুমের প্রস্তুতি','লক্ষ্য: রাত ১০টার কাছাকাছি'],
+ ['work','অফিসের দায়িত্ব/পড়াশোনায় মনোযোগ','কাজের দায়িত্ব আগে']
+];
+const prayerNames=['ফজর','যোহর','আসর','মাগরিব','এশা'];
+let data=load(), selected=0;
+const $=id=>document.getElementById(id);
+function bn(n){return String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);}
+function blank(){return {prayers:[false,false,false,false,false],habits:{},cigs:0,screen:0,note:''};}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{start:localDate(),days:{}}}catch(e){return {start:localDate(),days:{}}}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));}
+function localDate(){let d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function dayData(i){return data.days[i]||blank()}
+function dateFor(i){let d=new Date((data.start||localDate())+'T12:00:00');d.setDate(d.getDate()+i);return d.toLocaleDateString('bn-BD',{day:'numeric',month:'short'});}
+function score(x){return x.prayers.filter(Boolean).length+habitDefs.filter(h=>x.habits[h[0]]).length}
+function renderDays(){
+ $('days').innerHTML='';
+ for(let i=0;i<40;i++){
+  let x=dayData(i),s=score(x),el=document.createElement('button');
+  el.className='day'+(i===selected?' active':'')+(s>=6?' done':'');
+  el.innerHTML=`<strong>দিন ${bn(i+1)}</strong><small>${dateFor(i)}</small><small>${bn(s)}/১৩</small>`;
+  el.addEventListener('click',()=>{saveCurrent(false);selected=i;renderAll()});
+  $('days').appendChild(el);
+ }
+}
+function renderEditor(){
+ let x=dayData(selected);
+ $('selectedTitle').textContent='দিন '+bn(selected+1);
+ $('selectedDate').textContent=dateFor(selected);
+ $('prayers').innerHTML=prayerNames.map((p,i)=>`<label class="prayer">${p}<input type="checkbox" data-prayer="${i}" ${x.prayers[i]?'checked':''}></label>`).join('');
+ $('habits').innerHTML=habitDefs.map(h=>`<label class="habit"><input type="checkbox" data-habit="${h[0]}" ${x.habits[h[0]]?'checked':''}><span>${h[1]}<small>${h[2]}</small></span></label>`).join('');
+ $('cigs').value=x.cigs??0;$('screen').value=x.screen??0;$('note').value=x.note||'';
+ document.querySelectorAll('[data-prayer]').forEach(e=>e.addEventListener('change',()=>saveCurrent(false)));
+ document.querySelectorAll('[data-habit]').forEach(e=>e.addEventListener('change',()=>saveCurrent(false)));
+ ['cigs','screen','note'].forEach(id=>$(id).addEventListener('input',()=>saveCurrent(false)));
+}
+function saveCurrent(show=true){
+ let x=blank();
+ document.querySelectorAll('[data-prayer]').forEach(e=>x.prayers[+e.dataset.prayer]=e.checked);
+ document.querySelectorAll('[data-habit]').forEach(e=>x.habits[e.dataset.habit]=e.checked);
+ x.cigs=Math.max(0,Number($('cigs').value)||0);x.screen=Math.max(0,Number($('screen').value)||0);x.note=$('note').value;
+ data.days[selected]=x;persist();renderStats();renderDays();
+ if(show)$('saveMsg').textContent='দিন '+bn(selected+1)+'-এর তথ্য সংরক্ষিত হয়েছে।';
+}
+function renderStats(){
+ let total=0,done=0,pt=0,qt=0,lt=0;
+ for(let i=0;i<40;i++){let x=dayData(i),s=score(x);total+=s;if(s>=8)done++;pt+=x.prayers.filter(Boolean).length;if(x.habits.quran)qt++;if(x.habits.learning)lt++;}
+ let percent=Math.round(total/(40*13)*100),today=score(dayData(selected));
+ $('overall').textContent=bn(percent)+'%';$('overallBar').style.width=percent+'%';
+ $('completedDays').textContent=bn(done)+'/৪০';$('todayScore').textContent=bn(today)+'/১৩';$('todayBar').style.width=(today/13*100)+'%';
+ $('prayerTotal').textContent=bn(pt)+'/২০০';$('quranTotal').textContent=bn(qt)+'/৪০';$('learnTotal').textContent=bn(lt)+'/৪০';
+}
+function renderAll(){renderDays();renderEditor();renderStats();$('saveMsg').textContent=''}
+$('startDate').value=data.start||localDate();
+$('startDate').addEventListener('change',e=>{data.start=e.target.value||localDate();persist();renderDays();$('selectedDate').textContent=dateFor(selected)});
+$('save').addEventListener('click',()=>saveCurrent(true));
+$('clearDay').addEventListener('click',()=>{if(confirm('এই দিনের সব তথ্য খালি করবেন?')){data.days[selected]=blank();persist();renderAll();}});
+$('export').addEventListener('click',()=>{saveCurrent(false);let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='amar-40-diner-progress-backup.json';a.click();URL.revokeObjectURL(a.href)});
+$('reset').addEventListener('click',()=>{if(confirm('সতর্কতা: ৪০ দিনের সব তথ্য স্থায়ীভাবে মুছে যাবে। নিশ্চিত?')){data={start:data.start||localDate(),days:{}};persist();selected=0;renderAll();}});
+renderAll();
+</script>
+</body></html>
